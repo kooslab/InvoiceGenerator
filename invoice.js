@@ -1,22 +1,22 @@
-const HTMLToPDF = require('convert-html-to-pdf').default;
+const HTMLToPDF = require("convert-html-to-pdf").default;
 
-function getDeliveryItemsHTML(items){
-    let data = ""
-    for(let item of items){
-        data += `
+function getDeliveryItemsHTML(items) {
+  let data = "";
+  for (let item of items) {
+    data += `
     <div class="table-row">
         <div class=" table-cell w-6/12 text-left font-bold py-1 px-4">${item.name}</div>
         <div class=" table-cell w-[10%] text-center">${item.qty}</div>
-        <div class=" table-cell w-2/12 text-center">₹${item.rate}</div>
-        <div class=" table-cell w-2/12 text-center">₹${item.amount}</div>
+        <div class=" table-cell w-2/12 text-center">₩${item.rate}</div>
+        <div class=" table-cell w-2/12 text-center">₩${item.amount}</div>
     </div>
-    `
-    }
-    return data
+    `;
+  }
+  return data;
 }
 
-function getDeliveryHTML(options){
-    return `
+function getDeliveryHTML(options) {
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,12 +33,14 @@ function getDeliveryHTML(options){
         <!--Logo and Other info-->
         <div class="flex items-start justify-center">
             <div class="flex-1">
-                <div class="w-60 pb-6">
-                    <img class="w-40" src="${options.logo}" alt="Logo">
+                <div class="w-40 pl-4 pb-6">
+                    <img style="width: 50px; height: auto;" src="${
+                      options.logo
+                    }" alt="Logo">
                 </div>
                 
                 <div class="w-60 pl-4 pb-6">
-                    <h3 class="font-bold">${options.name}</h3>
+                    <h3 class="font-bold text-2xl">${options.name}</h3>
                     <p>${options.address1}</p>
                     <p>${options.address2}</p>
                 </div>
@@ -53,7 +55,9 @@ function getDeliveryHTML(options){
 
                 <div class="pb-16">
                     <h1 class=" font-normal text-4xl pb-1">Delivery Report</h1>
-                    <p class="text-right text-gray-500 text-xl"># ${options.orderId}</p>
+                    <p class="text-right text-gray-500 text-xl"># ${
+                      options.orderId
+                    }</p>
                 </div>
 
                 <div class="flex">
@@ -66,7 +70,9 @@ function getDeliveryHTML(options){
                         <p class="py-1">${options.date}</p>
                         <p class="py-1 pl-10">${options.paymentTerms}</p>
                         <div class="pb-2 py-1">
-                            <p class="font-bold text-xl">₹${options.balanceDue}</p>
+                            <p class="font-bold text-xl">₩${
+                              options.balanceDue
+                            }</p>
                         </div>
                     </div>
                 </div>
@@ -91,7 +97,9 @@ function getDeliveryHTML(options){
         
         <!--Total Amount-->
         <div class=" pt-20 pr-10 text-right">
-            <p class="text-gray-400">Total: <span class="pl-24 text-black">₹${options.total}</span></p>
+            <p class="text-gray-400">Total: <span class="pl-24 text-black">₩${
+              options.total
+            }</span></p>
         </div>
 
         <!--Notes and Other info-->
@@ -107,23 +115,27 @@ function getDeliveryHTML(options){
     </div>
 </body>
 </html>
-    `
+    `;
 }
 
 async function getInvoice(options) {
-    return new Promise(async (resolve,reject) => {
-        try {
-            const html = getDeliveryHTML(options)
-            const htmlToPDF = new HTMLToPDF(html)
+  return new Promise(async (resolve, reject) => {
+    try {
+      const html = getDeliveryHTML(options);
+      const htmlToPDF = new HTMLToPDF(html);
 
-            const pdf = await htmlToPDF.convert({waitForNetworkIdle: true, browserOptions: {defaultViewport: {width: 1920, height: 1080}}, pdfOptions: {height: 1200, width:900, timeout: 0}})
-            resolve(pdf)
-        } catch(err){
-            reject(err)
-        }
-    })
+      const pdf = await htmlToPDF.convert({
+        waitForNetworkIdle: true,
+        browserOptions: { defaultViewport: { width: 1920, height: 1080 } },
+        pdfOptions: { height: 1200, width: 900, timeout: 0 },
+      });
+      resolve(pdf);
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 module.exports = {
-    getInvoice
-}
+  getInvoice,
+};

@@ -1,28 +1,37 @@
 # InvoiceGenerator
+
 An Nodejs Invoice generator API which uses HTML and render it in browser then save it as PDF.
 
 ## Requirements
+
 Nodejs v16.0+
 
 ## Installation
+
 ```sh
 > Clone Repo
 npm i
 ```
 
 ## Setup
-* You can Add the port to expose in .env file `PORT=11000`
+
+- You can Add the port to expose in .env file `PORT=11000`
 
 ## Run
+
 ```sh
 node api.js
 ```
 
 ## Routes
-* `GET /sample` - returns the sample request object needed for the invoice to generate
-* `POST /getInvoice` - returns the pdf as content-type `application/pdf`
+
+- `GET /sample` - returns the sample request object needed for the invoice to generate
+- `POST /getInvoice` - returns the pdf as content-type `application/pdf`
 
 ## Sample Request Object
+
+You may create and update `data.json` like below format. `client.js` loads this `data.json` file for invoice generation.
+
 ```js
 {
     logo: "https://thumbs.dreamstime.com/b/laundry-basket-icon-trendy-design-style-isolated-white-background-vector-simple-modern-flat-symbol-web-site-mobile-135748439.jpg",
