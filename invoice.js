@@ -16,6 +16,13 @@ function getDeliveryItemsHTML(items) {
 }
 
 function getDeliveryHTML(options) {
+  // Convert absolute path to file URL format
+  const imagePath = options.logo.startsWith("http")
+    ? options.logo
+    : `file://${options.logo}`;
+
+  console.log("Image path:", imagePath); // For debugging
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +41,7 @@ function getDeliveryHTML(options) {
         <div class="flex items-start justify-center">
             <div class="flex-1">
                 <div class="w-40 pl-4 pb-6">
-                    <img style="width: 50px; height: auto;" src="${
-                      options.logo
-                    }" alt="Logo">
+                    <img style="width: 50px; height: auto;" src="${imagePath}" alt="Logo">
                 </div>
                 
                 <div class="w-60 pl-4 pb-6">
@@ -126,11 +131,20 @@ async function getInvoice(options) {
 
       const pdf = await htmlToPDF.convert({
         waitForNetworkIdle: true,
-        browserOptions: { defaultViewport: { width: 1920, height: 1080 } },
-        pdfOptions: { height: 1200, width: 900, timeout: 0 },
+        browserOptions: {
+          defaultViewport: { width: 1920, height: 1080 },
+          args: ["--allow-file-access-from-files"],
+        },
+        pdfOptions: {
+          height: 1200,
+          width: 900,
+          timeout: 0,
+          printBackground: true,
+        },
       });
       resolve(pdf);
     } catch (err) {
+      console.error("PDF Generation Error:", err);
       reject(err);
     }
   });
