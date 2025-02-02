@@ -9,11 +9,11 @@ const PORT = process.env["PORT"] || 11000;
 const deliveryOptions = {
   logo: "./kooslab_logo.png",
   name: "Kooslab",
-  address1: "#604-2, 123 Unjung-ro, Bundang-gu, Seongnam-si",
-  address2: "Gyeonggi-do, Republic of Korea, 13461",
-  orderId: "INV-24120201",
+  address1: "9 351 beon-gil, Haogae-ro",
+  address2: "Bundang-gu, Seongnam-si, Gyeonggi-do, Republic of Korea",
+  orderId: "INV-250131",
   customerName: "PARKINGAI",
-  date: "2024-12-02",
+  date: "2025-01-31",
   paymentTerms: "Server Installation for Mississippi Site",
   items: [
     {
@@ -50,20 +50,32 @@ const deliveryOptions = {
 
 app.post("/getInvoice", (req, res) => {
   const result = verifyBody(req.body);
-  console.log("result", result);
+  console.log("Verification result:", result);
   if (result.success) {
     getInvoice(req.body)
       .then((pdf) => {
-        console.log("PDF generated");
+        if (!pdf) {
+          console.error("PDF generation failed: No PDF data returned");
+          return res
+            .status(500)
+            .send({ success: false, error: "PDF generation failed" });
+        }
+        console.log("PDF generated successfully");
         res.status(200);
         res.contentType("application/pdf");
         res.send(pdf);
       })
       .catch((err) => {
-        console.error("error", err);
-        res.status(500).send({ success: false, error: "something went wrong" });
+        console.error("Error during PDF generation:", err);
+        res
+          .status(500)
+          .send({
+            success: false,
+            error: "Something went wrong during PDF generation",
+          });
       });
   } else {
+    console.error("Request body verification failed:", result);
     res.status(400).send(result);
   }
 });

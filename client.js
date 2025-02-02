@@ -19,15 +19,27 @@ const postData = async (url, data) => {
 const main = async () => {
   const pdfArrayBuffer = await postData(
     "http://localhost:11000/getInvoice",
-    data
+    data,
   );
 
   // Convert ArrayBuffer to Buffer and save it as a PDF file
   const pdfBuffer = Buffer.from(pdfArrayBuffer); // Convert to Buffer
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const date = new Date();
+  const timestamp =
+    date.getFullYear() +
+    "_" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "_" +
+    String(date.getDate()).padStart(2, "0") +
+    "_" +
+    String(date.getHours()).padStart(2, "0") +
+    "_" +
+    String(date.getMinutes()).padStart(2, "0") +
+    "_" +
+    String(date.getSeconds()).padStart(2, "0");
   const filePath = `${os.homedir()}/Downloads/invoice-${timestamp}.pdf`; // Use os.homedir() to get the home directory
   fs.writeFileSync(filePath, pdfBuffer); // Save the PDF to Downloads
-  console.log("PDF saved as invoice.pdf");
+  console.log(`PDF saved as invoice-${timestamp}.pdf`);
 };
 
 main(); // Call the main function
