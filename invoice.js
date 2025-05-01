@@ -1,4 +1,6 @@
 const HTMLToPDF = require("convert-html-to-pdf").default;
+const path = require("path");
+const fs = require("fs");
 
 function getDeliveryItemsHTML(items) {
   let data = "";
@@ -16,12 +18,24 @@ function getDeliveryItemsHTML(items) {
 }
 
 function getDeliveryHTML(options) {
-  // Convert absolute path to file URL format
-  const imagePath = options.logo.startsWith("http")
-    ? options.logo
-    : `file://${options.logo}`;
+  // Read and convert image to base64
+  let imageData;
+  try {
+    const imagePath = options.logo.startsWith("http")
+      ? options.logo
+      : path.resolve(options.logo);
+    if (!options.logo.startsWith("http")) {
+      const imageBuffer = fs.readFileSync(imagePath);
+      imageData = `data:image/png;base64,${imageBuffer.toString("base64")}`;
+    } else {
+      imageData = options.logo;
+    }
+  } catch (err) {
+    console.error("Error reading logo file:", err);
+    imageData = ""; // Fallback if image reading fails
+  }
 
-  console.log("Image path:", imagePath); // For debugging
+  console.log("Using image data:", imageData.substring(0, 100) + "..."); // For debugging
 
   return `
 <!DOCTYPE html>
@@ -41,7 +55,7 @@ function getDeliveryHTML(options) {
         <div class="flex items-start justify-center">
             <div class="flex-1">
                 <div class="w-40 pl-4 pb-6">
-                    <img style="width: 50px; height: auto;" src="${imagePath}" alt="Logo">
+                    <img style="width: 50px; height: auto;" src="${imageData}" />
                 </div>
                 
                 <div class="w-60 pl-4 pb-6">
